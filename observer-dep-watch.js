@@ -19,10 +19,12 @@ function defineReactive (data, key, val) {
         enumerable: true,
         configurable: true,
         get: function () {
+            //console.log('触发get')
             dep.depend()
             return val
         },
         set: function (newVal) {
+            //console.log('触发set')
             if(val === newVal){
                 return
             }
@@ -65,13 +67,28 @@ class Watch {
         this.exp = exp
         this.fn = fn
         pushTarget(this)
-        data[exp]
+        //eval('data[exp]')
+        quzhi(exp)
     }
+}
+
+
+function quzhi(exp) {
+    var arrStr = exp.split('.');
+    var str = 'data'
+    for(var i=0; i<arrStr.length; i++){
+        var item = arrStr[i];
+        //str+= `[${item}]`
+        str+= '["'+item+'"]'
+        
+    }
+    console.log(eval(str), 'val')
 }
 
 
 var data = {
     a: 1,
+    d: 12,
     b: {
         c: 2
     }
@@ -83,14 +100,16 @@ new Watch('a', () => {
     console.log(9)
 })
 
-new Watch('a', () => {
-    console.log(90)
-})
-
 new Watch('b.c', () => {
     console.log(80)
 })
 
+new Watch('d', () => {
+    console.log(20)
+})
+
 setTimeout(() => {
-    data.a = 2
+    data.a = 10
+    data.b.c = 3
+
 }, 1000)
